@@ -1,7 +1,17 @@
 spring:
   application:
     name: helpdesk
+  datasource:
+    url: jdbc:h2:mem:helpdesk
+    driver-class-name: org.h2.Driver
+  h2:
+    console:
+      enabled: true
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
 
 server:
   servlet:
-      context-path: /api
+    context-path: /api
