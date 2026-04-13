@@ -1,3 +1,7 @@
 spring:
   application:
     name: helpdesk
+
+server:
+  servlet:
+      context-path: /api
