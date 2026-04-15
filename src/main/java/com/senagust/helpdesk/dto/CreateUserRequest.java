@@ -11,7 +11,6 @@ public class CreateUserRequest {
     private String password;
     private String firstName;
     private String lastName;
-    private boolean isActive;
     private UserType userType;
-    private List<Integer> availableSlotHours; // ← add this
+    private List<Integer> availableSlotHours;
 }
