@@ -47,7 +47,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<CreateUserResponse> getAll() {
-        var users = userRepository.findAll();
+        var users = userRepository.findAllByIsActiveTrue();
 
         return users.stream().map(userMapper::toCreateUserResponse).toList();
     }
@@ -55,10 +55,25 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public CreateUserResponse getById(UUID userId) {
-        var user = userRepository
+        User user = userRepository
                 .findById(userId)
                 .orElseThrow(() -> new NotFoundException("User not found with id" + userId));
 
+        if (!user.isActive()) {
+            throw new NotFoundException("User not found with id" + userId);
+        }
+
         return userMapper.toCreateUserResponse(user);
+    }
+
+
+    @Override
+    public void deleteById(UUID userId) {
+        User user = userRepository.
+                findById(userId).orElseThrow(() -> new NotFoundException("User not found with id: " + userId));
+
+        user.setActive(false);
+
+        userRepository.save(user);
     }
 }
