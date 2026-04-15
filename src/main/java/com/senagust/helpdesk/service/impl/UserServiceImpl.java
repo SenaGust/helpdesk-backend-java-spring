@@ -12,6 +12,8 @@ import com.senagust.helpdesk.service.UserService;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @AllArgsConstructor
 public class UserServiceImpl implements UserService {
@@ -39,5 +41,12 @@ public class UserServiceImpl implements UserService {
         var createdUser = userRepository.save(user);
 
         return userMapper.toCreateUserResponse(createdUser);
+    }
+
+    @Override
+    public List<CreateUserResponse> getAll() {
+        var users = userRepository.findAll();
+        
+        return users.stream().map(userMapper::toCreateUserResponse).toList();
     }
 }
