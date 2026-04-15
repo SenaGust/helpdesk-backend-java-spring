@@ -13,6 +13,7 @@ import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @AllArgsConstructor
@@ -46,7 +47,17 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<CreateUserResponse> getAll() {
         var users = userRepository.findAll();
-        
+
         return users.stream().map(userMapper::toCreateUserResponse).toList();
+    }
+
+
+    @Override
+    public CreateUserResponse getById(UUID userId) {
+        var user = userRepository
+                .findById(userId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        return userMapper.toCreateUserResponse(user);
     }
 }

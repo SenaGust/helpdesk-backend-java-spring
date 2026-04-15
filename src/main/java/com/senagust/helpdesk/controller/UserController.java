@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/users")
@@ -29,5 +30,12 @@ public class UserController {
         var allUsers = userService.getAll();
 
         return ResponseEntity.ok(allUsers);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<CreateUserResponse> getUserById(@RequestParam UUID userId) {
+        var user = userService.getById(userId);
+
+        return ResponseEntity.ok(user);
     }
 }
