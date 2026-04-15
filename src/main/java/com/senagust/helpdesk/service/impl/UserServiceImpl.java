@@ -2,6 +2,7 @@ package com.senagust.helpdesk.service.impl;
 
 import com.senagust.helpdesk.dto.CreateUserRequest;
 import com.senagust.helpdesk.dto.CreateUserResponse;
+import com.senagust.helpdesk.exception.ConflictException;
 import com.senagust.helpdesk.exception.NotFoundException;
 import com.senagust.helpdesk.mapper.UserMapper;
 import com.senagust.helpdesk.model.Customer;
@@ -24,6 +25,10 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public CreateUserResponse create(CreateUserRequest request) {
+        if (userRepository.existsByEmail(request.getEmail())) {
+            throw new ConflictException("Email already in use: " + request.getEmail());
+        }
+
         User user;
 
         if (request.getUserType() == UserType.SERVICE_PROVIDER) {
