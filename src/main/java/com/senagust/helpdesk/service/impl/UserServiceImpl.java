@@ -2,6 +2,7 @@ package com.senagust.helpdesk.service.impl;
 
 import com.senagust.helpdesk.dto.CreateUserRequest;
 import com.senagust.helpdesk.dto.CreateUserResponse;
+import com.senagust.helpdesk.exception.NotFoundException;
 import com.senagust.helpdesk.mapper.UserMapper;
 import com.senagust.helpdesk.model.Customer;
 import com.senagust.helpdesk.model.ServiceProvider;
@@ -56,7 +57,7 @@ public class UserServiceImpl implements UserService {
     public CreateUserResponse getById(UUID userId) {
         var user = userRepository
                 .findById(userId)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> new NotFoundException("User not found with id" + userId));
 
         return userMapper.toCreateUserResponse(user);
     }
