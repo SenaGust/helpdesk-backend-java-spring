@@ -51,14 +51,14 @@ public class UserController {
         return ResponseEntity.ok(updatedUser);
     }
 
-    @PatchMapping("/{userId}/password")
+    @PostMapping("/{userId}/password")
     public ResponseEntity<Void> changePasswordById(@PathVariable UUID userId, @RequestBody String newPassword) {
         userService.changePasswordById(userId, newPassword);
 
         return ResponseEntity.noContent().build();
     }
 
-    @PatchMapping("/{userId}/reactivate")
+    @PostMapping("/{userId}/reactivate")
     public ResponseEntity<Void> reactivateUserById(@PathVariable UUID userId) {
         userService.reactivateById(userId);
 

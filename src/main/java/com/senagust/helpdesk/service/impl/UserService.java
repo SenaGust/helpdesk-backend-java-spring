@@ -26,6 +26,11 @@ public class UserService implements IUserService {
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
 
+    private User findActiveUserById(UUID userId) {
+        return userRepository.findByIdAndIsActiveTrue(userId)
+                .orElseThrow(() -> new NotFoundException("User not found with id" + userId));
+    }
+
     @Override
     public UserResponse create(CreateUserRequest request) {
         if (userRepository.existsByEmail(request.getEmail())) {
@@ -63,13 +68,7 @@ public class UserService implements IUserService {
 
     @Override
     public UserResponse getById(UUID userId) {
-        User user = userRepository
-                .findById(userId)
-                .orElseThrow(() -> new NotFoundException("User not found with id" + userId));
-
-        if (!user.isActive()) {
-            throw new NotFoundException("User not found with id" + userId);
-        }
+        User user = findActiveUserById(userId);
 
         return userMapper.toUserResponse(user);
     }
@@ -77,8 +76,7 @@ public class UserService implements IUserService {
 
     @Override
     public void deleteById(UUID userId) {
-        User user = userRepository.
-                findById(userId).orElseThrow(() -> new NotFoundException("User not found with id: " + userId));
+        User user = findActiveUserById(userId);
 
         user.setActive(false);
 
@@ -87,8 +85,7 @@ public class UserService implements IUserService {
 
     @Override
     public UserResponse updateById(UUID userId, UpdateUserRequest updateUserRequest) {
-        User user = userRepository.
-                findById(userId).orElseThrow(() -> new NotFoundException("User not found with id: " + userId));
+        User user = findActiveUserById(userId);
 
         user.setFirstName(updateUserRequest.getFirstName());
         user.setLastName(updateUserRequest.getLastName());
@@ -110,9 +107,8 @@ public class UserService implements IUserService {
 
     @Override
     public void changePasswordById(UUID userId, String newPassword) {
-        User user = userRepository.
-                findById(userId).orElseThrow(() -> new NotFoundException("User not found with id: " + userId));
-
+        User user = findActiveUserById(userId);
+        
         user.setPassword(passwordEncoder.encode(newPassword));
 
         userRepository.save(user);
