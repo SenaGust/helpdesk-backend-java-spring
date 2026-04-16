@@ -1,9 +1,11 @@
 package com.senagust.helpdesk.controller;
 
 import com.senagust.helpdesk.dto.CreateUserRequest;
+import com.senagust.helpdesk.dto.UpdateUserPasswordRequest;
 import com.senagust.helpdesk.dto.UpdateUserRequest;
 import com.senagust.helpdesk.dto.UserResponse;
 import com.senagust.helpdesk.service.IUserService;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,7 +21,7 @@ public class UserController {
     private final IUserService userService;
 
     @PostMapping
-    public ResponseEntity<UserResponse> createUser(@RequestBody CreateUserRequest newUser) {
+    public ResponseEntity<UserResponse> createUser(@Valid @RequestBody CreateUserRequest newUser) {
         var createdUser = userService.create(newUser);
 
         URI location = URI.create("/users/" + createdUser.getId());
@@ -49,15 +51,15 @@ public class UserController {
     }
 
     @PatchMapping("/{userId}")
-    public ResponseEntity<UserResponse> updateUserById(@PathVariable UUID userId, @RequestBody UpdateUserRequest updateUserRequest) {
+    public ResponseEntity<UserResponse> updateUserById(@PathVariable UUID userId, @Valid @RequestBody UpdateUserRequest updateUserRequest) {
         var updatedUser = userService.updateById(userId, updateUserRequest);
 
         return ResponseEntity.ok(updatedUser);
     }
 
     @PostMapping("/{userId}/password")
-    public ResponseEntity<Void> changePasswordById(@PathVariable UUID userId, @RequestBody String newPassword) {
-        userService.changePasswordById(userId, newPassword);
+    public ResponseEntity<Void> changePasswordById(@PathVariable UUID userId, @Valid @RequestBody UpdateUserPasswordRequest newPassword) {
+        userService.changePasswordById(userId, newPassword.getPassword());
 
         return ResponseEntity.noContent().build();
     }
