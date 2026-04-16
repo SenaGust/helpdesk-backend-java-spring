@@ -5,23 +5,28 @@ Providers**.
 
 ## Tech Stack
 
-- **Java 21**
+- **Java 25**
 - **Spring Boot 4.1**
 - **Spring Data JPA** — database access
 - **H2** — in-memory database (development)
 - **MapStruct** — object mapping between DTOs and entities
 - **Lombok** — boilerplate reduction
+- **Spring Security Crypto** — BCrypt password hashing
+- **Hibernate Validator** — Bean Validation for request DTOs
 
 ## Project Structure
 
 ```
 src/main/java/com/senagust/helpdesk/
+├── config/           # Spring beans (password encoder, H2 console)
 ├── controller/       # HTTP request handling
-├── service/          # Business logic (interface + impl)
-├── repository/       # Database access
-├── model/            # JPA entities
 ├── dto/              # Request and response objects
-└── mapper/           # MapStruct mappers
+├── exception/        # Custom exceptions and global exception handler
+├── mapper/           # MapStruct mappers
+├── model/            # JPA entities
+├── repository/       # Database access
+├── service/          # Business logic (interface + impl)
+└── validation/       # Custom validation annotations
 ```
 
 ## Data Model
@@ -74,12 +79,15 @@ Use the following connection settings:
 
 ### Users
 
-| Method   | Endpoint          | Description                                     |
-|----------|-------------------|-------------------------------------------------|
-| `POST`   | `/api/users`      | Create a new user                               |
-| `GET`    | `/api/users`      | List all active users                           |
-| `GET`    | `/api/users/{id}` | Get a user by ID                                |
-| `DELETE` | `/api/users/{id}` | Soft-delete a user (sets `isActive` to `false`) |
+| Method   | Endpoint                      | Description                                     |
+|----------|-------------------------------|-------------------------------------------------|
+| `POST`   | `/api/users`                  | Create a new user                               |
+| `GET`    | `/api/users`                  | List all active users                           |
+| `GET`    | `/api/users/{id}`             | Get a user by ID                                |
+| `PATCH`  | `/api/users/{id}`             | Update a user's name                            |
+| `DELETE` | `/api/users/{id}`             | Soft-delete a user (sets `isActive` to `false`) |
+| `POST`   | `/api/users/{id}/password`    | Change a user's password                        |
+| `POST`   | `/api/users/{id}/reactivate`  | Reactivate a soft-deleted user                  |
 
 ### Create User — Request Body
 
@@ -125,7 +133,10 @@ All errors follow this format:
 }
 ```
 
-| Status          | Meaning                                 |
-|-----------------|-----------------------------------------|
-| `404 Not Found` | User does not exist or has been deleted |
-| `409 Conflict`  | Email is already in use                 |
+| Status                    | Meaning                                      |
+|---------------------------|----------------------------------------------|
+| `400 Bad Request`         | Invalid or missing input fields              |
+| `404 Not Found`           | User does not exist or has been deleted      |
+| `405 Method Not Allowed`  | Wrong HTTP method used for the endpoint      |
+| `409 Conflict`            | Email already in use or user already active  |
+| `500 Internal Server Error` | Unexpected server error                    |

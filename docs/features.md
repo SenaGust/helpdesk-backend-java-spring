@@ -1,90 +1,73 @@
 # Features Checklist
 
 ## Infrastructure
-- [ ] Set up Node.js project environment with TypeScript and Express.js
-- [ ] Configure PostgreSQL and Prisma or Knex for database access
+- [x] Set up Java project environment with Spring Boot
+- [x] Configure H2 in-memory database for development
+- [ ] Configure PostgreSQL for production
 - [ ] Create Dockerfile and docker-compose for backend and database
-- [ ] Configure Vite for the front-end
-- [ ] Add TailwindCSS to the front-end
-- [ ] Configure environment variables for backend and front-end
+- [ ] Configure environment variables for each environment
 
 ## Authentication
 - [ ] Configure JWT authentication for login and secure access
-- [ ] Implement authentication and role-based authorization middleware
+- [ ] Implement authentication and role-based authorization
 
-## Admin
-- [ ] Create model for Admin accounts
-- [ ] Create endpoint to create an Admin account
-- [ ] Create endpoint to list Admin accounts
-- [ ] Create endpoint to edit an Admin account
-- [ ] Create endpoint to delete an Admin account
+## Users
+- [x] Create base `User` model with JPA JOINED inheritance
+- [x] Create `Customer` model
+- [x] Create `ServiceProvider` model with available slot hours
+- [x] Create endpoint to create a user (`POST /users`)
+- [x] Create endpoint to list active users (`GET /users`)
+- [x] Create endpoint to get user by ID (`GET /users/{id}`)
+- [x] Create endpoint to update user name (`PATCH /users/{id}`)
+- [x] Create endpoint to change password (`POST /users/{id}/password`)
+- [x] Create endpoint to soft-delete a user (`DELETE /users/{id}`)
+- [x] Create endpoint to reactivate a deleted user (`POST /users/{id}/reactivate`)
+- [x] Encrypt passwords with BCrypt before storing
 
-## Technician
-- [ ] Create model for Technician accounts
-- [ ] Create endpoint to create a Technician account
-- [ ] Create endpoint to list Technician accounts
-- [ ] Create endpoint to edit a Technician account
-- [ ] Create endpoint to change Technician password
-- [ ] Create endpoint to update Technician availability hours
-- [ ] Create endpoint to upload Technician profile image
-- [ ] Define default availability hours for technicians
-- [ ] Allow Technician to change password after first login
-- [ ] Allow Admin to edit Technician availability hours
-
-## Customer
-- [ ] Create model for Customer accounts
-- [ ] Create endpoint to create a Customer account
-- [ ] Create endpoint to list Customer accounts
-- [ ] Create endpoint to edit a Customer account
-- [ ] Create endpoint to delete a Customer account
-- [ ] Create endpoint to upload Customer profile image
+## Validation & Error Handling
+- [x] Add input validation to all request DTOs
+- [x] Create custom `@ValidPassword` annotation
+- [x] Create `GlobalExceptionHandler` with structured error responses
+- [x] Handle `404 Not Found`, `409 Conflict`, `400 Bad Request`, `405 Method Not Allowed`
+- [ ] Add cross-field validation (e.g. `availableSlotHours` required for `SERVICE_PROVIDER`)
 
 ## Services
 - [ ] Create model for Services
 - [ ] Create endpoint to create a Service
 - [ ] Create endpoint to list Services
 - [ ] Create endpoint to edit a Service
-- [ ] Create endpoint to deactivate a Service with Soft Delete
+- [ ] Create endpoint to deactivate a Service with soft delete
 
 ## Tickets
 - [ ] Create model for Tickets
 - [ ] Create endpoint for Customer to create a Ticket selecting Technician and Service
 - [ ] Create endpoint to list Customer Tickets
-- [ ] Create endpoint to list Tickets assigned to a Technician
+- [ ] Create endpoint to list Tickets assigned to a ServiceProvider
 - [ ] Create endpoint to list all Tickets (Admin)
-- [ ] Create endpoint to add extra Services to a Ticket (Technician)
-- [ ] Create endpoint to update Ticket status to Open, In Progress or Closed
+- [ ] Create endpoint to add extra Services to a Ticket
+- [ ] Create endpoint to update Ticket status (Open, In Progress, Closed)
 
 ## Business Rules
 - [ ] Block Customer from editing or deleting a Ticket after creation
-- [ ] Block Technician from creating Tickets and editing Customer accounts
+- [ ] Block ServiceProvider from creating Tickets and editing Customer accounts
 - [ ] Delete all Tickets when a Customer account is deleted
-- [ ] Implement visibility rules for Admin, Technician and Customer
-- [ ] Create input validations with Zod
+- [ ] Implement visibility rules per user type
 
 ## Tests
-- [ ] Configure Jest for automated backend tests
-- [ ] Create tests for authentication
-- [ ] Create tests for user endpoints (Admin, Technician, Customer)
+- [ ] Configure test environment with Spring Boot Test
+- [ ] Create tests for user endpoints
 - [ ] Create tests for Service endpoints
 - [ ] Create tests for Ticket endpoints
-- [ ] Test critical endpoints with supertest or similar library
 
 ## Seed
-- [ ] Create initial seed with 1 Admin, 3 Technicians with availability hours and 5 Services
-
-## Front-end
-- [ ] Create responsive front-end layout following Mobile First with Figma
-- [ ] Implement API consumption on the front-end
+- [ ] Create initial seed with sample users and services
 
 ## Deploy
-- [ ] Deploy backend on Render
-- [ ] Deploy front-end on Vercel or Netlify
+- [ ] Deploy backend on Render or Railway
+- [ ] Configure production database (PostgreSQL)
 - [ ] Validate environment variables and connection string in production
 - [ ] Ensure the API is accessible via public URL
 
 ## Documentation
-- [ ] Create detailed backend README with setup, scripts, variables and deploy link
-- [ ] Create detailed front-end README with setup, scripts and deploy link
-- [ ] Include instructions for local setup, tests and example users
-- [ ] Verify that all functional and profile requirements have been met
+- [x] Create backend README with setup, stack and API reference
+- [ ] Add instructions for local setup and example requests
