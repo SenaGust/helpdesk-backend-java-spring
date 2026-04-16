@@ -28,7 +28,7 @@ public class UserService implements IUserService {
 
     private User findActiveUserById(UUID userId) {
         return userRepository.findByIdAndIsActiveTrue(userId)
-                .orElseThrow(() -> new NotFoundException("User not found with id" + userId));
+                .orElseThrow(() -> new NotFoundException("User not found with id: " + userId));
     }
 
     @Override
@@ -108,7 +108,7 @@ public class UserService implements IUserService {
     @Override
     public void changePasswordById(UUID userId, String newPassword) {
         User user = findActiveUserById(userId);
-        
+
         user.setPassword(passwordEncoder.encode(newPassword));
 
         userRepository.save(user);
