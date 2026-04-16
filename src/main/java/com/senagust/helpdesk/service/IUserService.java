@@ -17,4 +17,8 @@ public interface IUserService {
     void deleteById(UUID userId);
 
     UserResponse updateById(UUID userId, UpdateUserRequest updateUserRequest);
+
+    void reactivateById(UUID userId);
+
+    void changePasswordById(UUID userId, String newPassword);
 }

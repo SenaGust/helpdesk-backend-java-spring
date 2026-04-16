@@ -97,4 +97,24 @@ public class UserService implements IUserService {
 
         return userMapper.toUserResponse(user);
     }
+
+    @Override
+    public void reactivateById(UUID userId) {
+        User user = userRepository.
+                findById(userId).orElseThrow(() -> new NotFoundException("User not found with id: " + userId));
+
+        user.setActive(true);
+
+        userRepository.save(user);
+    }
+
+    @Override
+    public void changePasswordById(UUID userId, String newPassword) {
+        User user = userRepository.
+                findById(userId).orElseThrow(() -> new NotFoundException("User not found with id: " + userId));
+
+        user.setPassword(passwordEncoder.encode(newPassword));
+
+        userRepository.save(user);
+    }
 }
