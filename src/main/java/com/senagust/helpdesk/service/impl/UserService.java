@@ -37,15 +37,14 @@ public class UserService implements IUserService {
             throw new ConflictException("Email already in use: " + request.getEmail());
         }
 
-        User user;
-
-        if (request.getUserType() == UserType.SERVICE_PROVIDER) {
-            ServiceProvider serviceProvider = new ServiceProvider();
-            serviceProvider.setAvailableSlotHours(request.getAvailableSlotHours());
-            user = serviceProvider;
-        } else {
-            user = new Customer();
-        }
+        User user = switch (request.getUserType()) {
+            case SERVICE_PROVIDER -> {
+                ServiceProvider sp = new ServiceProvider();
+                sp.setAvailableSlotHours(request.getAvailableSlotHours());
+                yield sp;
+            }
+            case CUSTOMER -> new Customer();
+        };
 
         user.setEmail(request.getEmail());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
@@ -99,6 +98,10 @@ public class UserService implements IUserService {
     public void reactivateById(UUID userId) {
         User user = userRepository.
                 findById(userId).orElseThrow(() -> new NotFoundException("User not found with id: " + userId));
+
+        if (user.isActive()) {
+            throw new ConflictException("User with id " + userId + " is already active");
+        }
 
         user.setActive(true);
 
