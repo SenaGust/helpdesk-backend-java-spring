@@ -1,7 +1,8 @@
 package com.senagust.helpdesk.service.impl;
 
 import com.senagust.helpdesk.dto.CreateUserRequest;
-import com.senagust.helpdesk.dto.CreateUserResponse;
+import com.senagust.helpdesk.dto.UpdateUserRequest;
+import com.senagust.helpdesk.dto.UserResponse;
 import com.senagust.helpdesk.exception.ConflictException;
 import com.senagust.helpdesk.exception.NotFoundException;
 import com.senagust.helpdesk.mapper.UserMapper;
@@ -26,7 +27,7 @@ public class UserServiceImpl implements UserService {
     private final PasswordEncoder passwordEncoder;
 
     @Override
-    public CreateUserResponse create(CreateUserRequest request) {
+    public UserResponse create(CreateUserRequest request) {
         if (userRepository.existsByEmail(request.getEmail())) {
             throw new ConflictException("Email already in use: " + request.getEmail());
         }
@@ -49,19 +50,19 @@ public class UserServiceImpl implements UserService {
 
         var createdUser = userRepository.save(user);
 
-        return userMapper.toCreateUserResponse(createdUser);
+        return userMapper.toUserResponse(createdUser);
     }
 
     @Override
-    public List<CreateUserResponse> getAll() {
+    public List<UserResponse> getAll() {
         var users = userRepository.findAllByIsActiveTrue();
 
-        return users.stream().map(userMapper::toCreateUserResponse).toList();
+        return users.stream().map(userMapper::toUserResponse).toList();
     }
 
 
     @Override
-    public CreateUserResponse getById(UUID userId) {
+    public UserResponse getById(UUID userId) {
         User user = userRepository
                 .findById(userId)
                 .orElseThrow(() -> new NotFoundException("User not found with id" + userId));
@@ -70,7 +71,7 @@ public class UserServiceImpl implements UserService {
             throw new NotFoundException("User not found with id" + userId);
         }
 
-        return userMapper.toCreateUserResponse(user);
+        return userMapper.toUserResponse(user);
     }
 
 
@@ -82,5 +83,18 @@ public class UserServiceImpl implements UserService {
         user.setActive(false);
 
         userRepository.save(user);
+    }
+
+    @Override
+    public UserResponse updateById(UUID userId, UpdateUserRequest updateUserRequest) {
+        User user = userRepository.
+                findById(userId).orElseThrow(() -> new NotFoundException("User not found with id: " + userId));
+
+        user.setFirstName(updateUserRequest.getFirstName());
+        user.setLastName(updateUserRequest.getLastName());
+
+        userRepository.save(user);
+
+        return userMapper.toUserResponse(user);
     }
 }

@@ -1,17 +1,20 @@
 package com.senagust.helpdesk.service;
 
 import com.senagust.helpdesk.dto.CreateUserRequest;
-import com.senagust.helpdesk.dto.CreateUserResponse;
+import com.senagust.helpdesk.dto.UpdateUserRequest;
+import com.senagust.helpdesk.dto.UserResponse;
 
 import java.util.List;
 import java.util.UUID;
 
 public interface UserService {
-    CreateUserResponse create(CreateUserRequest request);
+    UserResponse create(CreateUserRequest request);
 
-    List<CreateUserResponse> getAll();
+    List<UserResponse> getAll();
 
-    CreateUserResponse getById(UUID userId);
+    UserResponse getById(UUID userId);
 
     void deleteById(UUID userId);
+
+    UserResponse updateById(UUID userId, UpdateUserRequest updateUserRequest);
 }
