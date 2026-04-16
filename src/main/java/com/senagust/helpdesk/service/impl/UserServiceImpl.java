@@ -12,6 +12,7 @@ import com.senagust.helpdesk.model.UserType;
 import com.senagust.helpdesk.repository.UserRepository;
 import com.senagust.helpdesk.service.UserService;
 import lombok.AllArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -22,6 +23,7 @@ import java.util.UUID;
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     public CreateUserResponse create(CreateUserRequest request) {
@@ -40,7 +42,7 @@ public class UserServiceImpl implements UserService {
         }
 
         user.setEmail(request.getEmail());
-        user.setPassword(request.getPassword());
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
         user.setFirstName(request.getFirstName());
         user.setLastName(request.getLastName());
         user.setActive(true);
