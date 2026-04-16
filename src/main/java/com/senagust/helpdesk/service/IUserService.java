@@ -7,7 +7,7 @@ import com.senagust.helpdesk.dto.UserResponse;
 import java.util.List;
 import java.util.UUID;
 
-public interface UserService {
+public interface IUserService {
     UserResponse create(CreateUserRequest request);
 
     List<UserResponse> getAll();

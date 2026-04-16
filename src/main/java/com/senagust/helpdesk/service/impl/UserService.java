@@ -11,7 +11,7 @@ import com.senagust.helpdesk.model.ServiceProvider;
 import com.senagust.helpdesk.model.User;
 import com.senagust.helpdesk.model.UserType;
 import com.senagust.helpdesk.repository.UserRepository;
-import com.senagust.helpdesk.service.UserService;
+import com.senagust.helpdesk.service.IUserService;
 import lombok.AllArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -21,7 +21,7 @@ import java.util.UUID;
 
 @Service
 @AllArgsConstructor
-public class UserServiceImpl implements UserService {
+public class UserService implements IUserService {
     private final UserRepository userRepository;
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;

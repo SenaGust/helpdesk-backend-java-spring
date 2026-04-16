@@ -3,7 +3,7 @@ package com.senagust.helpdesk.controller;
 import com.senagust.helpdesk.dto.CreateUserRequest;
 import com.senagust.helpdesk.dto.UpdateUserRequest;
 import com.senagust.helpdesk.dto.UserResponse;
-import com.senagust.helpdesk.service.UserService;
+import com.senagust.helpdesk.service.IUserService;
 import lombok.AllArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,7 +15,7 @@ import java.util.UUID;
 @RequestMapping("/users")
 @AllArgsConstructor
 public class UserController {
-    private final UserService userService;
+    private final IUserService userService;
 
     @PostMapping
     public ResponseEntity<UserResponse> createUser(@RequestBody CreateUserRequest newUser) {
@@ -47,7 +47,7 @@ public class UserController {
     @PatchMapping("/{userId}")
     public ResponseEntity<UserResponse> updateUserById(@PathVariable UUID userId, @RequestBody UpdateUserRequest updateUserRequest) {
         var updatedUser = userService.updateById(userId, updateUserRequest);
-        
+
         return ResponseEntity.ok(updatedUser);
     }
 }
