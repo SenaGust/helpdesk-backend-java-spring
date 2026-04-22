@@ -1,6 +1,7 @@
 package com.senagust.helpdesk.model;
 
 import jakarta.persistence.*;
+import lombok.Builder;
 import lombok.Data;
 
 import java.util.UUID;
@@ -19,5 +20,8 @@ public abstract class User {
     private String firstName;
     private String lastName;
     private boolean isActive;
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private UserType userType;
 }
 

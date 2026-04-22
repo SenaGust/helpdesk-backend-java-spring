@@ -9,7 +9,6 @@ import com.senagust.helpdesk.mapper.UserMapper;
 import com.senagust.helpdesk.model.Customer;
 import com.senagust.helpdesk.model.ServiceProvider;
 import com.senagust.helpdesk.model.User;
-import com.senagust.helpdesk.model.UserType;
 import com.senagust.helpdesk.repository.UserRepository;
 import com.senagust.helpdesk.service.IUserService;
 import lombok.AllArgsConstructor;
@@ -51,6 +50,7 @@ public class UserService implements IUserService {
         user.setFirstName(request.getFirstName());
         user.setLastName(request.getLastName());
         user.setActive(true);
+        user.setUserType(request.getUserType());
 
         var createdUser = userRepository.save(user);
 
