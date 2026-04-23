@@ -7,21 +7,24 @@ Providers**.
 
 - **Java 25**
 - **Spring Boot 4.1**
+- **Spring Security** — JWT authentication and endpoint protection
 - **Spring Data JPA** — database access
-- **H2** — in-memory database (development)
+- **H2** — file-based database (development)
+- **Flyway** — database migrations
 - **MapStruct** — object mapping between DTOs and entities
 - **Lombok** — boilerplate reduction
-- **Spring Security Crypto** — BCrypt password hashing
 - **Hibernate Validator** — Bean Validation for request DTOs
+- **JJWT** — JWT token generation and validation
 
 ## Project Structure
 
 ```
 src/main/java/com/senagust/helpdesk/
-├── config/           # Spring beans (password encoder, H2 console)
+├── config/           # Spring beans (security, Flyway, H2 console)
 ├── controller/       # HTTP request handling
 ├── dto/              # Request and response objects
 ├── exception/        # Custom exceptions and global exception handler
+├── filter/           # JWT authentication filter
 ├── mapper/           # MapStruct mappers
 ├── model/            # JPA entities
 ├── repository/       # Database access
@@ -61,7 +64,7 @@ The API will be available at `http://localhost:8080/api`.
 
 ### H2 Console
 
-Access the in-memory database UI at:
+Access the file-based database UI at:
 
 ```
 http://localhost:8080/api/h2-console
@@ -69,25 +72,54 @@ http://localhost:8080/api/h2-console
 
 Use the following connection settings:
 
-| Field    | Value                  |
-|----------|------------------------|
-| JDBC URL | `jdbc:h2:mem:helpdesk` |
-| Username | `sa`                   |
-| Password | *(leave empty)*        |
+| Field    | Value                       |
+|----------|-----------------------------|
+| JDBC URL | `jdbc:h2:file:./data/helpdesk` |
+| Username | `sa`                        |
+| Password | *(leave empty)*             |
 
 ## API Endpoints
 
+### Authentication
+
+| Method | Endpoint          | Description               | Auth required |
+|--------|-------------------|---------------------------|---------------|
+| `POST` | `/api/auth/login` | Login and receive a JWT   | No            |
+
+#### Login — Request Body
+
+```json
+{
+  "email": "john@example.com",
+  "password": "secret"
+}
+```
+
+#### Login — Response
+
+```json
+{
+  "accessToken": "eyJhbGci..."
+}
+```
+
+All protected endpoints require the token in the `Authorization` header:
+
+```
+Authorization: Bearer eyJhbGci...
+```
+
 ### Users
 
-| Method   | Endpoint                      | Description                                     |
-|----------|-------------------------------|-------------------------------------------------|
-| `POST`   | `/api/users`                  | Create a new user                               |
-| `GET`    | `/api/users`                  | List all active users                           |
-| `GET`    | `/api/users/{id}`             | Get a user by ID                                |
-| `PATCH`  | `/api/users/{id}`             | Update a user's name                            |
-| `DELETE` | `/api/users/{id}`             | Soft-delete a user (sets `isActive` to `false`) |
-| `POST`   | `/api/users/{id}/password`    | Change a user's password                        |
-| `POST`   | `/api/users/{id}/reactivate`  | Reactivate a soft-deleted user                  |
+| Method   | Endpoint                      | Description                                     | Auth required |
+|----------|-------------------------------|-------------------------------------------------|---------------|
+| `POST`   | `/api/users`                  | Create a new user                               | No            |
+| `GET`    | `/api/users`                  | List all active users                           | Yes           |
+| `GET`    | `/api/users/{id}`             | Get a user by ID                                | Yes           |
+| `PATCH`  | `/api/users/{id}`             | Update a user's name                            | Yes           |
+| `DELETE` | `/api/users/{id}`             | Soft-delete a user (sets `isActive` to `false`) | Yes           |
+| `POST`   | `/api/users/{id}/password`    | Change a user's password                        | Yes           |
+| `POST`   | `/api/users/{id}/reactivate`  | Reactivate a soft-deleted user                  | Yes           |
 
 ### Create User — Request Body
 
