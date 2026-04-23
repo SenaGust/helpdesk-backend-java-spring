@@ -3,6 +3,7 @@ package com.senagust.helpdesk.service;
 import com.senagust.helpdesk.dto.CreateUserRequest;
 import com.senagust.helpdesk.dto.UserResponse;
 import com.senagust.helpdesk.exception.ConflictException;
+import com.senagust.helpdesk.exception.NotFoundException;
 import com.senagust.helpdesk.mapper.UserMapper;
 import com.senagust.helpdesk.model.Customer;
 import com.senagust.helpdesk.model.User;
@@ -85,6 +86,15 @@ public class UserServiceTest {
             UserResponse result = userService.getById(id);
 
             assertThat(result).isEqualTo(expectedResponse);
+        }
+
+        @Test
+        void shouldThrowNotFoundException_whenUserDoesNotExist() {
+            UUID id = UUID.randomUUID();
+
+            when(userRepository.findByIdAndIsActiveTrue(id)).thenReturn(Optional.empty());
+
+            Assertions.assertThatThrownBy(() -> userService.getById(id)).isInstanceOf(NotFoundException.class).hasMessageContaining("User not found with id: " + id);
         }
     }
 }
