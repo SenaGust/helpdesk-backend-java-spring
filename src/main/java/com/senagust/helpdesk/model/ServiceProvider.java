@@ -13,6 +13,6 @@ public class ServiceProvider extends User {
             name = "contractor_available_hours",
             joinColumns = @JoinColumn(name = "contractor_id")
     )
-    @Column(name = "\"hour\"")
+    @Column(name = "available_hour")
     private List<Integer> availableSlotHours;
 }

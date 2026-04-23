@@ -2,20 +2,26 @@ spring:
   application:
     name: helpdesk
   datasource:
-    url: jdbc:h2:mem:helpdesk
+    url: jdbc:h2:file:./data/helpdesk
     driver-class-name: org.h2.Driver
+    username: sa
+    password:
   h2:
     console:
       enabled: true
   jpa:
     hibernate:
-      ddl-auto: create-drop
+      ddl-auto: validate
     show-sql: true
+  flyway:
+    enabled: true
+    locations: classpath:db/migration
 
 jwt:
   secret: 7a9f3c2e1b8d4f6a0e5c9b2d7f1a4e8c3b6d9f2a5e8c1b4d7f0a3e6c9b2d5f8
   expiration-in-ms: 86400000
 
 server:
+  port: 9090
   servlet:
     context-path: /api

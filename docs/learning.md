@@ -3,7 +3,7 @@
 Based on https://roadmap.sh/backend and https://roadmap.sh/java
 
 - [x] Understand better how the login process is working
-- [ ] Make a migration (I already did that on NodeJs)
+- [x] Implement migration using flyway
 - [ ] Caching
 - [ ] Documentation (Javadoc)
 - [ ] Open Ai specs
