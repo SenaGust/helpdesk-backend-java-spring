@@ -1,6 +1,7 @@
 package com.senagust.helpdesk.service;
 
 import com.senagust.helpdesk.dto.CreateUserRequest;
+import com.senagust.helpdesk.dto.UpdateUserRequest;
 import com.senagust.helpdesk.dto.UserResponse;
 import com.senagust.helpdesk.exception.ConflictException;
 import com.senagust.helpdesk.exception.NotFoundException;
@@ -20,6 +21,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -95,6 +97,87 @@ public class UserServiceTest {
             when(userRepository.findByIdAndIsActiveTrue(id)).thenReturn(Optional.empty());
 
             Assertions.assertThatThrownBy(() -> userService.getById(id)).isInstanceOf(NotFoundException.class).hasMessageContaining("User not found with id: " + id);
+        }
+    }
+
+    @Nested
+    class getAll {
+        @Test
+        void shouldReturnAllAvailableUsers_whenThereIsUsers() {
+            User user = new Customer();
+            user.setFirstName("testable user");
+            UserResponse userResponse = new UserResponse();
+            userResponse.setFirstName(user.getFirstName());
+
+            when(userRepository.findAllByIsActiveTrue()).thenReturn(List.of(user));
+            when(userMapper.toUserResponse(user)).thenReturn(userResponse);
+
+            List<UserResponse> result = userService.getAll();
+
+            assertThat(result).contains(userResponse);
+        }
+    }
+
+    @Nested
+    class deleteById {
+        @Test
+        void shouldDeleteAnActiveUser_whenItIsActive() {
+            UUID id = UUID.randomUUID();
+            User user = new Customer();
+            user.setEmail("test@test.com");
+            when(userRepository.findByIdAndIsActiveTrue(id)).thenReturn(Optional.of(user));
+
+            userService.deleteById(id);
+
+            ArgumentCaptor<User> captor = ArgumentCaptor.forClass(User.class);
+            verify(userRepository).save(captor.capture());
+            User savedUser = captor.getValue();
+            assertThat(savedUser.isActive()).isEqualTo(false);
+            assertThat(savedUser.getEmail()).isEqualTo(user.getEmail());
+        }
+
+        @Test
+        void shouldThrowNotFoundException_whenItIsNotActive() {
+            UUID id = UUID.randomUUID();
+            when(userRepository.findByIdAndIsActiveTrue(id)).thenReturn(Optional.empty());
+
+            Assertions.assertThatThrownBy(() -> userService.deleteById(id)).isInstanceOf(NotFoundException.class);
+        }
+    }
+
+    @Nested
+    class updateById {
+        @Test
+        void shouldUpdateAnUser_whenUpdateAnActiveUser() {
+            UUID id = UUID.randomUUID();
+            UpdateUserRequest updateUserRequest = new UpdateUserRequest();
+            updateUserRequest.setFirstName("new first name");
+            updateUserRequest.setLastName("new last name");
+            var helper = new Customer();
+            when(userRepository.findByIdAndIsActiveTrue(id)).thenReturn(Optional.of(helper));
+            when(userMapper.toUserResponse(helper)).thenReturn(new UserResponse());
+
+            UserResponse user = userService.updateById(id, updateUserRequest);
+
+            ArgumentCaptor<User> captor = ArgumentCaptor.forClass(User.class);
+            verify(userRepository).save(captor.capture());
+            var updatedUser = captor.getValue();
+            assertThat(updatedUser.getFirstName()).isEqualTo(updateUserRequest.getFirstName());
+            assertThat(updatedUser.getLastName()).isEqualTo(updateUserRequest.getLastName());
+        }
+
+        @Test
+        void shouldNotUpdateAnUser_whenUpdateAnUnactiveUser() {
+            UUID id = UUID.randomUUID();
+            UpdateUserRequest updateUserRequest = new UpdateUserRequest();
+            updateUserRequest.setFirstName("first name");
+            updateUserRequest.setLastName("last name");
+
+            when(userRepository.findByIdAndIsActiveTrue(id)).thenReturn(Optional.empty());
+
+            Assertions.assertThatThrownBy(() -> userService.updateById(id, updateUserRequest)).isInstanceOf(NotFoundException.class);
+
+
         }
     }
 }

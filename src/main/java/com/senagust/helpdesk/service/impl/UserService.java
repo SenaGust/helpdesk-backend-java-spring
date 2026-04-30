@@ -64,15 +64,13 @@ public class UserService implements IUserService {
         return users.stream().map(userMapper::toUserResponse).toList();
     }
 
-
     @Override
     public UserResponse getById(UUID userId) {
         User user = findActiveUserById(userId);
 
         return userMapper.toUserResponse(user);
     }
-
-
+    
     @Override
     public void deleteById(UUID userId) {
         User user = findActiveUserById(userId);
